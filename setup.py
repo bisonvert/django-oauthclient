@@ -26,7 +26,7 @@ setup(
     url = 'http://bitbucket.org/bisonvert/django-oauthclient',
     install_requires = [
             "Django >= 1.1",
-    ]
+    ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',
