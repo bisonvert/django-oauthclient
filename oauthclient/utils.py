@@ -2,6 +2,14 @@
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
 
+from models import Token, OAuthServer
+
+def get_token_field(identifier, field):
+    return getattr(Token.objects.get(identifier=identifier), field)
+
+def get_server_field(identifier, field):
+    return getattr(Token.objects.get(identifier=identifier).server, field) 
+
 def oauth_need_authentication(request, force=False):
     """Authenticate user using oauth flow, if the an authentication does not
     already exists.
