@@ -17,5 +17,5 @@ def create_oauth_token(app, created_models, verbosity, **kwargs):
                 call_command("oauthcreatetoken", interactive=True)
             break
 
-signals.post_syncdb.connect(create_oauth_token, sender=oauthclient_app,
-    dispatch_uid="oauthclient.management.create_oauth_token")
+#signals.post_syncdb.connect(create_oauth_token, sender=oauthclient_app,
+#    dispatch_uid="oauthclient.management.create_oauth_token")
