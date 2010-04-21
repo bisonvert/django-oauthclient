@@ -12,7 +12,7 @@ def oauth_need_authentication(request, identifier, force=False):
     already exists.
     
     """
-    return not (identifier + 'oauth_token' and identifier + 'oauth_token_secret' in request.session)
+    return not (identifier + '_oauth_token' and identifier + '_oauth_token_secret' in request.session)
     
 def is_oauthenticated(identifier, force=False):
     """Decorator when oauth authentication is needed.
@@ -32,7 +32,7 @@ def is_oauthenticated(identifier, force=False):
             if force or oauth_need_authentication(request=request,
                     identifier=identifier, force=force):
                 return redirect('%s?next=%s' % (
-                    reverse('oauth:request_token', kwargs={'identifier':identifier}), 
+                    reverse('oauth:request_token'), 
                     request.path))
             else:
                 return func(*args, **kwargs)

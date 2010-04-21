@@ -37,8 +37,9 @@ def get_request_token(request, identifier):
     request.session[identifier + '_request_token_secret'] = request_token['oauth_token_secret']
     
     #redirect the user to the authentication page
-    callback_url = 'http://%s%s' % (Site.objects.get_current().domain,
-        reverse('oauth:access_token_ready', args=[identifier]))
+    callback_url = 'http://%s%s' % (
+        Site.objects.get_current().domain, 
+        reverse('oauth:access_token_ready'))
     
     redirect_url = "%s?oauth_token=%s&oauth_callback=%s" % (
         token.server.get_authorize_url(), 
@@ -78,7 +79,7 @@ def access_token_ready(request, identifier):
     request_token = oauth2.Token(request.session[identifier + '_request_token'],
         request.session[identifier + '_request_token_secret'])
     request_token.set_verifier(request.GET['oauth_verifier'])
-    client = oauth2.Client(_get_consumer(), request_token)
+    client = oauth2.Client(token.get_consumer(), request_token)
     resp, content = client.request(token.server.get_access_token_url() , "POST")
     access_token = dict(urlparse.parse_qsl(content))
     

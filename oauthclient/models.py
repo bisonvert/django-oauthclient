@@ -21,6 +21,12 @@ class OAuthServer(models.Model):
     def get_authorize_url(self):
         return self.server_url + self.authorize_url
 
+    def __unicode__(self):
+        return u'Server : %s' % self.server_url
+
+    class Meta:
+        verbose_name = "OAuth Server"
+
 
 class ConsumerToken(models.Model):
     """Define a couple key-secret provided by the oauth server for this
@@ -32,6 +38,9 @@ class ConsumerToken(models.Model):
     secret = models.CharField(max_length=SECRET_SIZE, null=True, blank=True)
     server = models.ForeignKey(OAuthServer)
     last_modification = models.DateField(auto_now=True)
+
+    def __unicode__(self):
+        return 'Token : %s' % self.identifier
 
     def get_consumer(self):
         """Return a consumer object, configured with settings values.
