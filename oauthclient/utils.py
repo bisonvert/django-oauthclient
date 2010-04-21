@@ -2,22 +2,19 @@
 from django.shortcuts import redirect
 from django.core.urlresolvers import reverse
 
-from models import Token, OAuthServer
+from models import ConsumerToken, OAuthServer
 
-def get_token_field(identifier, field):
-    return getattr(Token.objects.get(identifier=identifier), field)
+def get_consumer_token(identifier):
+    return ConsumerToken.objects.get(identifier=identifier)
 
-def get_server_field(identifier, field):
-    return getattr(Token.objects.get(identifier=identifier).server, field) 
-
-def oauth_need_authentication(request, force=False):
+def oauth_need_authentication(request, identifier, force=False):
     """Authenticate user using oauth flow, if the an authentication does not
     already exists.
     
     """
-    return not ('oauth_token' and 'oauth_token_secret' in request.session)
+    return not (identifier + 'oauth_token' and identifier + 'oauth_token_secret' in request.session)
     
-def is_oauthenticated(force=False):
+def is_oauthenticated(identifier, force=False):
     """Decorator when oauth authentication is needed.
     
     If the user is not authenticated, redirect the user to the oauth 
@@ -32,8 +29,11 @@ def is_oauthenticated(force=False):
     def wrapper(func):
         def wrapped(*args, **kwargs):
             request = args[0]
-            if force or oauth_need_authentication(request=request, force=force):
-                return redirect('%s?next=%s' % (reverse('oauth:request_token'), request.path))
+            if force or oauth_need_authentication(request=request,
+                    identifier=identifier, force=force):
+                return redirect('%s?next=%s' % (
+                    reverse('oauth:request_token', kwargs={'identifier':identifier}), 
+                    request.path))
             else:
                 return func(*args, **kwargs)
         return wrapped

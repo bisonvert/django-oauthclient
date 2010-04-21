@@ -9,7 +9,7 @@ import urlparse
 
 #oauthclient import
 from utils import is_oauthenticated
-from models import Token, OAuthServer
+from models import ConsumerToken, OAuthServer
 
 def get_request_token(request, identifier):
     """First and second step of the three-legged OAuth flow:
@@ -21,7 +21,7 @@ def get_request_token(request, identifier):
     view.
     
     """
-    token = Token.objects.get(identifier=identifier)
+    token = ConsumerToken.objects.get(identifier=identifier)
     client = oauth2.Client(token.get_consumer())
     resp, content = client.request(token.server.get_request_token_url(), "GET")
 
@@ -40,8 +40,11 @@ def get_request_token(request, identifier):
     callback_url = 'http://%s%s' % (Site.objects.get_current().domain,
         reverse('oauth:access_token_ready', args=[identifier]))
     
-    redirect_url = "%s?oauth_token=%s&oauth_callback=%s" %
-        (token.server.get_authorize_url(), request_token['oauth_token'], callback_url)
+    redirect_url = "%s?oauth_token=%s&oauth_callback=%s" % (
+        token.server.get_authorize_url(), 
+        request_token['oauth_token'], 
+        callback_url)
+
     if 'next' in request.GET:
         request.session['next'] = request.GET['next']
     request.session.save()
@@ -69,7 +72,7 @@ def access_token_ready(request, identifier):
     if not 'oauth_verifier' in request.GET:
         raise Exception('oauth_verifier must be present in request.GET')
     
-    token = Token.objects.get(identifier=identifier)
+    token = ConsumerToken.objects.get(identifier=identifier)
 
     # Echange the request token against a access token.
     request_token = oauth2.Token(request.session[identifier + '_request_token'],

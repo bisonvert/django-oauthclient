@@ -6,7 +6,11 @@ from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError
 from django.utils.translation import ugettext as _
 
-from oauthclient.models import OAuthServer, Token
+from oauthclient.models import OAuthServer, ConsumerToken
+
+DEFAULT_REQUEST_TOKEN_URL = '/oauth/request_token/'
+DEFAULT_ACCESS_TOKEN_URL = '/oauth/access_token/'
+DEFAULT_AUTHORIZE_URL = '/oauth/authorize/'
 
 class Command(BaseCommand):
     option_list = BaseCommand.option_list + (
@@ -21,14 +25,14 @@ class Command(BaseCommand):
         make_option('--serverurl', dest='serverurl', default=None, 
             help='Specify the OAuth server root url.'),
         make_option('--request-token-url', dest='request_token_url',
-            default='/oauth/request_token/', 
-            help='Specify the request token url'),
+            default=DEFAULT_REQUEST_TOKEN_URL, 
+            help='Specify the request token url. Default is %s' % DEFAULT_REQUEST_TOKEN_URL),
         make_option('--access_token_url', dest = 'access_token_url',
-            default='/oauth/access_token/',
-            help='Specify the access token url'),
+            default=DEFAULT_ACCESS_TOKEN_URL,
+            help='Specify the access token url. Default is %s' % DEFAULT_ACCESS_TOKEN_URL),
         make_option('--authorize-url', dest = 'authorize_url', 
-            default='/oauth/authorize/', 
-            help='Specify the authorize url'),
+            default=DEFAULT_AUTHORIZE_URL, 
+            help='Specify the authorize url. Default is %s' % DEFAULT_AUTHORIZE_URL),
         make_option('--noinput', action='store_false', dest='interactive', default=True,
             help='Tells Django to NOT prompt the user for input of any kind. '    \
                  'You must use --server-url, --key and --secret with --noinput.')
@@ -76,6 +80,6 @@ class Command(BaseCommand):
             authorize_url=authorize_url)
         server.save()
 
-        token = Token(identifier=identifier, key=key, secret=secret, server=server)
+        token = ConsumerToken(identifier=identifier, key=key, secret=secret, server=server)
         token.save()
-        print "Token and Server successfully configured"
+        print "Consumer Token and Server successfully configured"

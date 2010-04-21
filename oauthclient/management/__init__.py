@@ -3,10 +3,10 @@ from oauthclient import models as oauthclient_app
 from django.core.management import call_command
 
 def create_oauth_token(app, created_models, verbosity, **kwargs):
-    from oauthclient.models import Token
-    if Token in created_models and kwargs.get('interactive', True):
+    from oauthclient.models import ConsumerToken
+    if ConsumerToken in created_models and kwargs.get('interactive', True):
         msg = "\nYou just installed oauthclient app, wich means you" \
-                "don't have any token defined yet.\n Would you like to define " \
+                "don't have any consumer token defined yet.\n Would you like to define " \
                 "them now ? (yes/no): "
         confirm = raw_input(msg)
         while 1:

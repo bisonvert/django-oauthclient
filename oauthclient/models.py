@@ -22,7 +22,7 @@ class OAuthServer(models.Model):
         return self.server_url + self.authorize_url
 
 
-class Token(models.Model):
+class ConsumerToken(models.Model):
     """Define a couple key-secret provided by the oauth server for this
     application.
 
@@ -33,7 +33,7 @@ class Token(models.Model):
     server = models.ForeignKey(OAuthServer)
     last_modification = models.DateField(auto_now=True)
 
-    def _get_consumer(self):
+    def get_consumer(self):
         """Return a consumer object, configured with settings values.
         
         """
