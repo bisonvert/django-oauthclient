@@ -1,7 +1,13 @@
 Django OAuth Client Application
 ===============================
 
-A tree-legged OAuth authentication application for django.
+This application provides a simple way to setup a tree-legged OAuth 
+authentication for django.
+
+It has been originally created for the default client of `Bison Vert
+<http://www.bisonvert.net>`_.
+
+The code is avalaible under a BSD licence.
 
 Installation
 ------------
@@ -13,20 +19,45 @@ On you django application, add oauthclient to the app list::
         'oauthclient',
     )
 
-Then, run syncdb::
+Please, note that you *need* to use the `django.contrib.site` application,
+properly configured with your project default url. This is needed to redirect
+the user on you website once authenticated on the distant server.
+
+Then, run syncdb, in order to create the tables that will store the token key
+and secrets you'll use for your application.::
 
     $ python manage.py syncdb
 
 Configuration
--------------
+--------------
 
-And go to the admin interface to set up the tokens (be sure to activate it.). You also can specify the tokens in your settings file. Here are the constants::
+Then, you can either go to the admin interface to set up the tokens and websites
+you want to use. For this purpose, you need to have an existant admin instance
+in your application.
+
+You also can use the `oauth_createtoken` command ::
+
+    $ python manage.py oauthcreatetoken
+
+
+Setting up the constants
+-------------------------
+
+You also need to set up your session key in your settings. It need to be unique
+within all your applications::
 
     PERSISTENT_SESSION_KEY = 'unique persistant session key'
 
-    # OAUTH URLs
-    OAUTH_SERVER_URL = "the oauth server url"
-    OAUTH_REQUEST_TOKEN_URL = '%s/oauth/request_token/' % OAUTH_SERVER_URL
-    OAUTH_ACCESS_TOKEN_URL = '%s/oauth/access_token/' % OAUTH_SERVER_URL
-    OAUTH_AUTHORIZE_URL = '%s/oauth/authorize/' % OAUTH_SERVER_URL
- 
+
+Urls
+----
+    
+Now, you need to provide urls to access the oauthclient application, for your
+project. Here is a simple configuration::
+    
+    urlpatterns = patterns('',
+        # your already existing urls
+        (r'^oauth/', include('oauthclient.urls', namespace='oauth',
+                app_name='yourappoauth'), {'identifier': 'yourappname'}),
+    )
+
