@@ -101,7 +101,8 @@ def logout(request, identifier):
     """
     for key in ('oauth_token', 'oauth_token_secret', 
         'request_token', 'request_token_secret'):
-        if hasattr(request.session, identifier + '_' + key):
+        if identifier + '_' + key in request.session:
+            set_trace()
             del request.session[identifier + '_' + key]
             
     return render('logout.html', {})
