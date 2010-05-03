@@ -12,7 +12,7 @@ def is_oauth_authenticated(request, identifier):
     provider identifier.
     
     """
-    return not (identifier + '_oauth_token' and identifier + '_oauth_token_secret' in request.session)
+    return (identifier + '_oauth_token' and identifier + '_oauth_token_secret' in request.session)
     
 def need_oauth_authentication(identifier, force=False):
     """Decorator when oauth authentication is needed.
@@ -29,7 +29,7 @@ def need_oauth_authentication(identifier, force=False):
     def wrapper(func):
         def wrapped(*args, **kwargs):
             request = args[0]
-            if force or is_oauth_authenticated(request=request,
+            if force or not is_oauth_authenticated(request=request,
                     identifier=identifier):
                 return redirect('%s?next=%s' % (
                     reverse('oauth:request_token'), 
