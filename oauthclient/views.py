@@ -8,7 +8,6 @@ import oauth2
 import urlparse
 
 #oauthclient import
-from utils import is_oauthenticated
 from models import ConsumerToken, OAuthServer
 
 """These views are a generic way to do a three legged authentication with OAuth. 
@@ -18,7 +17,7 @@ website: http://oauth.net/core/diagram.png
 
 """
 
-def get_request_token(request, identifier):
+def get_request_token(request, identifier='default'):
     """First and second step of the three-legged OAuth flow:
     
     Request a request token to the OAuth server, and redirect the user on the
@@ -58,7 +57,7 @@ def get_request_token(request, identifier):
     request.session.save()
     return redirect(redirect_url)
     
-def access_token_ready(request, identifier):
+def access_token_ready(request, identifier='default'):
     """Last step of the OAuth three-legged flow.
 
     The user is redirected here once he allowed (or not) the application to 
@@ -102,7 +101,7 @@ def access_token_ready(request, identifier):
         
     return render('authenticated.html', {})
     
-def logout(request, identifier):
+def logout(request, identifier='default'):
     """Destruct the active session oauth related keys.
     
     """

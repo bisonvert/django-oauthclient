@@ -7,14 +7,14 @@ from models import ConsumerToken, OAuthServer
 def get_consumer_token(identifier):
     return ConsumerToken.objects.get(identifier=identifier)
 
-def oauth_need_authentication(request, identifier, force=False):
-    """Authenticate user using oauth flow, if the an authentication does not
-    already exists.
+def is_oauth_authenticated(request, identifier):
+    """Tell if the user is authenticated to oauth, for the specified OAuth
+    provider identifier.
     
     """
     return not (identifier + '_oauth_token' and identifier + '_oauth_token_secret' in request.session)
     
-def is_oauthenticated(identifier, force=False):
+def need_oauth_authentication(identifier, force=False):
     """Decorator when oauth authentication is needed.
     
     If the user is not authenticated, redirect the user to the oauth 
@@ -29,8 +29,8 @@ def is_oauthenticated(identifier, force=False):
     def wrapper(func):
         def wrapped(*args, **kwargs):
             request = args[0]
-            if force or oauth_need_authentication(request=request,
-                    identifier=identifier, force=force):
+            if force or is_oauth_authenticated(request=request,
+                    identifier=identifier):
                 return redirect('%s?next=%s' % (
                     reverse('oauth:request_token'), 
                     request.path))
