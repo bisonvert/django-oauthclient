@@ -11,11 +11,18 @@ import urlparse
 from utils import is_oauthenticated
 from models import ConsumerToken, OAuthServer
 
+"""These views are a generic way to do a three legged authentication with OAuth. 
+
+You can find more information on three legged authentication on the OAuth
+website: http://oauth.net/core/diagram.png
+
+"""
+
 def get_request_token(request, identifier):
     """First and second step of the three-legged OAuth flow:
     
     Request a request token to the OAuth server, and redirect the user on the
-    OAuth server, to authorize user access.
+    OAuth server, to authorize user access, aka steps A, B and C.
     
     Once this done, the server redirect the user on the access_token_ready
     view.
@@ -55,7 +62,7 @@ def access_token_ready(request, identifier):
     """Last step of the OAuth three-legged flow.
 
     The user is redirected here once he allowed (or not) the application to 
-    access private informations.
+    access private informations, aka steps D, E and F.
     
     Echange a valid request token against a valid access token. If a valid 
     access token is given, store it in session.
