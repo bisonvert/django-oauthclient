@@ -1,7 +1,12 @@
 from django.db import models
+from django.conf import settings
+from oauthclient.settings import OAUTH_CONSUMER_KEY_SIZE, OAUTH_CONSUMER_SECRET_SIZE
 import oauth2
 
-KEY_SIZE = SECRET_SIZE = 16
+KEY_SIZE = getattr(settings, 'OAUTH_CONSUMER_KEY_SIZE', 
+    OAUTH_CONSUMER_KEY_SIZE)
+SECRET_SIZE = getattr(settings,'OAUTH_CONSUMER_SECRET_SIZE', 
+    OAUTH_CONSUMER_SECRET_SIZE) 
 
 class OAuthServer(models.Model):
     """Defines the urls to use for the oauth authentication.
