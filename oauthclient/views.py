@@ -1,5 +1,5 @@
 # django imports
-from django.shortcuts import render_to_response as render, redirect
+from django.shortcuts import render_to_response, redirect
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 
@@ -9,6 +9,7 @@ import urlparse
 
 #oauthclient import
 from models import ConsumerToken, OAuthServer
+from oauthclient import settings
 
 """These views are a generic way to do a three legged authentication with OAuth. 
 
@@ -72,7 +73,7 @@ def access_token_ready(request, identifier='default'):
             'present in session.' % (identifier, identifier))
     
     if ('error' in request.GET):
-        return render('error.html', {
+        return render_to_response(settings.ERROR_TEMPLATE, {
             'error':request.GET['error']
         })
     
@@ -98,8 +99,9 @@ def access_token_ready(request, identifier='default'):
 
     if 'next' in request.session:
         return redirect(request.session['next'])
-        
-    return render('authenticated.html', {})
+    if settings.REDIRECT_AFTER_LOGIN == None:
+        return render_to_response(settings.LOGIN_TEMPLATE)
+    return redirect(settings.REDIRECT_AFTER_LOGIN)
     
 def logout(request, identifier='default'):
     """Destruct the active session oauth related keys.
@@ -110,4 +112,6 @@ def logout(request, identifier='default'):
         if hasattr(request.session, identifier + '_' + key):
             del request.session[identifier + '_' + key]
             
-    return render('logout.html', {})
+    if settings.REDIRECT_AFTER_LOGOUT == None:
+        return render_to_response(settings.LOGOUT_TEMPLATE)
+    return redirect(settings.REDIRECT_AFTER_LOGOUT)
