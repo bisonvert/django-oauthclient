@@ -111,7 +111,7 @@ def logout(request, identifier='default'):
         'request_token', 'request_token_secret'):
         if identifier + '_' + key in request.session:
             del request.session[identifier + '_' + key]
-            
+    request.session.save()
     if settings.REDIRECT_AFTER_LOGOUT == None:
         return render_to_response(settings.LOGOUT_TEMPLATE)
     return redirect(settings.REDIRECT_AFTER_LOGOUT)
