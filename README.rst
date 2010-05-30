@@ -31,29 +31,35 @@ and secrets you'll use for your application.::
 Configuration
 --------------
 
-Then, you can either go to the admin interface to set up the tokens and websites
-you want to use. For this purpose, you need to have an existant admin instance
-in your application.
-
-You also can use the `oauth_createtoken` command ::
+Then, to set up you tokens and oauth providers, you can either go to the admin 
+interface (if you have one), or use the `oauthcreatetoken` command, for instance::
 
     $ python manage.py oauthcreatetoken
+    Token identifier: bisonvert
+    Token key: wsWLjVsSTPYd8H8xV8
+    Token secret: G64F6GNWfKV8kV2DTU66JkFSPKVhhTT9
+    Server URL: http://api.bisonvert.net 
+    Consumer Token and Server successfully configured
 
+
+Please note that you need the oauth provider token key and secret, *and* a token
+identifier, that represents the associated OAuth provider. it have to match the
+one provided in urls (see below). Default is `default`. 
 
 Setting up the constants
 -------------------------
 
-You also need to set up your session key in your settings. It need to be unique
-within all your applications::
+In order to prevent cookie based problems between your client and server, 
+please check that your `PERSISTENT_SESSION_KEY` settings are *differents* 
+in both applications:: 
 
     PERSISTENT_SESSION_KEY = 'unique persistant session key'
-
 
 Urls
 ----
     
 Now, you need to provide urls to access the oauthclient application, for your
-project. Here is a simple configuration::
+project. Here is a simple configuration, feel free to adapt to your needs::
     
     urlpatterns = patterns('',
         # your already existing urls

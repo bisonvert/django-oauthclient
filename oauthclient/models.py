@@ -1,7 +1,7 @@
 from django.db import models
+from django.conf import settings
+from oauthclient.settings import CONSUMER_KEY_SIZE, CONSUMER_SECRET_SIZE
 import oauth2
-
-KEY_SIZE = SECRET_SIZE = 16
 
 class OAuthServer(models.Model):
     """Defines the urls to use for the oauth authentication.
@@ -34,8 +34,8 @@ class ConsumerToken(models.Model):
 
     """
     identifier = models.CharField(max_length=200, unique=True)
-    key = models.CharField(max_length=KEY_SIZE, null=True, blank=True)
-    secret = models.CharField(max_length=SECRET_SIZE, null=True, blank=True)
+    key = models.CharField(max_length=CONSUMER_KEY_SIZE, null=True, blank=True)
+    secret = models.CharField(max_length=CONSUMER_SECRET_SIZE, null=True, blank=True)
     server = models.ForeignKey(OAuthServer)
     last_modification = models.DateField(auto_now=True)
 

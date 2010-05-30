@@ -1,5 +1,5 @@
 # django imports
-from django.shortcuts import render_to_response as render, redirect
+from django.shortcuts import render_to_response, redirect
 from django.contrib.sites.models import Site
 from django.core.urlresolvers import reverse
 
@@ -8,14 +8,21 @@ import oauth2
 import urlparse
 
 #oauthclient import
-from utils import is_oauthenticated
 from models import ConsumerToken, OAuthServer
+from oauthclient import settings
 
-def get_request_token(request, identifier):
+"""These views are a generic way to do a three legged authentication with OAuth. 
+
+You can find more information on three legged authentication on the OAuth
+website: http://oauth.net/core/diagram.png
+
+"""
+
+def get_request_token(request, identifier='default'):
     """First and second step of the three-legged OAuth flow:
     
     Request a request token to the OAuth server, and redirect the user on the
-    OAuth server, to authorize user access.
+    OAuth server, to authorize user access, aka steps A, B and C.
     
     Once this done, the server redirect the user on the access_token_ready
     view.
@@ -51,11 +58,11 @@ def get_request_token(request, identifier):
     request.session.save()
     return redirect(redirect_url)
     
-def access_token_ready(request, identifier):
+def access_token_ready(request, identifier='default'):
     """Last step of the OAuth three-legged flow.
 
     The user is redirected here once he allowed (or not) the application to 
-    access private informations.
+    access private informations, aka steps D, E and F.
     
     Echange a valid request token against a valid access token. If a valid 
     access token is given, store it in session.
@@ -66,7 +73,7 @@ def access_token_ready(request, identifier):
             'present in session.' % (identifier, identifier))
     
     if ('error' in request.GET):
-        return render('error.html', {
+        return render_to_response(settings.ERROR_TEMPLATE, {
             'error':request.GET['error']
         })
     
@@ -92,10 +99,11 @@ def access_token_ready(request, identifier):
 
     if 'next' in request.session:
         return redirect(request.session['next'])
-        
-    return render('authenticated.html', {})
+    if settings.REDIRECT_AFTER_LOGIN == None:
+        return render_to_response(settings.LOGIN_TEMPLATE)
+    return redirect(settings.REDIRECT_AFTER_LOGIN)
     
-def logout(request, identifier):
+def logout(request, identifier='default'):
     """Destruct the active session oauth related keys.
     
     """
@@ -104,4 +112,6 @@ def logout(request, identifier):
         if identifier + '_' + key in request.session:
             del request.session[identifier + '_' + key]
             
-    return render('logout.html', {})
+    if settings.REDIRECT_AFTER_LOGOUT == None:
+        return render_to_response(settings.LOGOUT_TEMPLATE)
+    return redirect(settings.REDIRECT_AFTER_LOGOUT)
