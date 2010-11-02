@@ -68,7 +68,7 @@ def access_token_ready(request, identifier='default'):
     access token is given, store it in session.
     
     """
-    if not identifier+'_request_token' and identifier+'_request_token_secret' in request.session:
+    if not (identifier+'_request_token' and identifier+'_request_token_secret' in request.session):
         raise Exception('%s_request_token and %s_request_token_secret are not' \
             'present in session.' % (identifier, identifier))
     
